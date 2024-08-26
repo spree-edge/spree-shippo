@@ -1,0 +1,48 @@
+<%= render 'spree/admin/shared/order_tabs', current: :item_boxes %>
+
+<% content_for :page_title do %>
+  / <%= Spree.t(:item_request_boxes) %>
+<% end %>
+
+<div class="content-header page-header">
+  <div class="row">
+    <h1 class="col-xs-6">Item boxes</h1>
+    <div class="page-actions col-xs-6" data-hook="toolbar">
+      <%= link_to spree.edit_admin_order_url(@line_items&.first&.order&.number), class: "btn btn-success" do %>
+        <%= Spree.t(:back) %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div>
+  <% @line_items.each do |line_item| %>
+    <% product_taxons = line_item.variant.product.taxons.map(&:name) %>
+    <% all_taxons = Spree::Taxon.pluck(:name) %>
+    <div class="panel panel-default">
+      <div style="padding:10px">
+        <% if (product_taxons & all_taxons).any? %>
+          <div class="row">
+            <%= render 'label_generator_section', 
+                      line_item: line_item, 
+                      label_type: :shipping, 
+                      label_url: line_item.item_box_shipping_label, 
+                      country_id: line_item.order.ship_address.country_id, 
+                      generate_path: admin_orders_label_generator_ship_label_path(line_item.order.number, line_item.id), 
+                      regenerate_path: admin_orders_label_generator_ship_label_path(line_item.order.number, line_item.id) %>
+
+            <%= render 'label_generator_section', 
+                      line_item: line_item, 
+                      label_type: :return, 
+                      label_url: line_item.item_box_return_label, 
+                      country_id: line_item.order.ship_address.country_id, 
+                      generate_path: admin_orders_label_generator_return_label_path(line_item.order.number, line_item.id), 
+                      regenerate_path: admin_orders_label_generator_return_label_path(line_item.order.number, line_item.id) %>
+          </div>
+        <% else %>
+          <div><%= Spree.t(:not_applicable) %></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

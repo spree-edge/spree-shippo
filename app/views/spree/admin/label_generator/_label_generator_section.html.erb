@@ -1,0 +1,33 @@
+<div class="col-md-6">
+  <div>
+    <span class="item-box-<%= label_type %>-label">
+      <%= label_type.to_s.titleize %> <%= Spree.t(:label)  %>
+    </span>
+  </div>
+
+  <% if label_type == :return && country_id == 38 %>
+    <p><%= Spree.t(:ship_to_country_canada)  %></p>
+  <% else %>
+    <% if label_url.present? %>
+      <iframe src="<%= label_url %>" width="300px" height="200px"></iframe>
+      <div>
+        <span>
+          <%= link_to 'Download Label', label_url, 
+              { download: "return_label", class: "btn-sm btn-info", target: "_blank" } %>
+        </span>
+        <span>
+          <%= link_to 'Download Item Description', 
+              admin_orders_label_generator_item_detail_path(line_item.order.number, line_item.id), 
+              { download: "return_label", class: "btn-sm btn-info", target: "_blank" } %>
+        </span>
+      </div>
+      <div style="padding:5px">
+        <%= link_to 'Re-Generate', regenerate_path, class: "btn btn-primary btn-generate" %>
+      </div>
+    <% else %>
+      <div>
+        <%= link_to 'Generate', generate_path, class: "btn btn-primary btn-generate" %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,28 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  hello: "Hello world"
+  spree:
+    not_applicable: Not Applicable
+    item_request_boxes: Item Request Boxes
+    label: Label
+    ship_to_country_canada: Ship To Country is Canada
+    download_labels: Download Labels
+    placed: Placed
+    packed: Packed
+    order_number: Order Number
+    delivered: Delivered
+    carrier: Carrier
+    tracking_number: Tracking Number
+    from: From
+    to: To
+    current_status: Current Status
+    status: Status
+    status_detail: Status Detail
+    location: Location
+    more_tracking: More Tracking History
+    not_applicable: Not applicable
+    history: History
+    no_tracking_info: No tracking information available
+    date : Date

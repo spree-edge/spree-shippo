@@ -1,0 +1,15 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_orders_path %>
+  <%= @order.number %>
+<% end %>
+
+<% content_for :page_tabs do %>
+  <%= render partial: 'spree/admin/shared/tabs', locals: { tabs: order_tabs, object: @order, current: current } %>
+
+  <%= content_tag :li, class: 'nav-item', data: { hook: 'admin_order_tabs_item_boxes' } do %>
+    <%= link_to spree.admin_orders_label_generator_url(@order), class: "icon-link with-tip nav-link #{'active' if current == :item_boxes}" do %>
+      <span class="icon icon-inbox"></span>
+      <span class="text"><%= Spree.t(:download_labels)%></span>
+    <% end %>
+  <% end %>
+<% end %>

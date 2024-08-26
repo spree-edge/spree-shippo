@@ -1,0 +1,13 @@
+<div class="container">
+  <div><b><%= Spree::Store.current.name %></b></div>
+  <div><%= Spree.t(:order_number)%>: <%= line_item.order.number %></div>
+  <div class="row">
+    <table class="table table-striped" style="width: 50%">
+      <tbody>
+        <tr>
+          <td><%= line_item.product.name %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

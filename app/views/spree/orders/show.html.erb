@@ -1,0 +1,25 @@
+<div class='order-show container d-flex flex-column align-items-center flex-lg-wrap flex-lg-row justify-content-center' id="order_summary" data-hook>
+  <% if order_just_completed?(@order) %>
+    <%= icon(name: 'check-mark-circle',
+             classes: 'd-block d-lg-none mx-auto order-show-check-mark',
+             width: 56,
+             height: 56) %>
+    <%= icon(name: 'check-mark-circle',
+             classes: 'd-none d-lg-block mx-auto order-show-check-mark',
+             width: 102,
+             height: 102) %>
+    <h5 class="w-100 text-center"><%= Spree.t(:order_success) %></h5>
+    <p class="order-show-explain w-100 text-center"><%= Spree.t(:order_success_explain) %></p>
+  <% end %>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="order-show-number">
+      <%= accurate_title %> / <%= pretty_date(@order.completed_at) %>
+    </div>
+    <% if !['pending', 'ready', 'backorder'].include?(@order.shipment_state) %>
+      <div class="button-myaccount-view-all">
+        <%= link_to "TRACK", user_orders_shipment_tracking_path(@order.number), class: 'btn btn-primary rounded' %>
+      </div>
+    <% end %>
+  </div>
+  <%= render partial: 'spree/shared/order_details', locals: { order: @order } %>
+</div>

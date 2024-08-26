@@ -1,0 +1,217 @@
+<div>
+  <section class="edit-prescription">
+    <div class="container">
+      <div class="row tracking-row">
+        <% @shipments.each do |shipment| %>
+          <% tracking = shipment.get_tracking_details(shipment.tracking) %>
+
+          <% if tracking != nil %>
+            <div class="col-6 col-sm-6 col-lg-6 lens-type">  
+              <div class="tracking-progress-bar">
+                <% if ["UNKNOWN", "PRE_TRANSIT", "TRANSIT", "DELIVERED"].include?(tracking['tracking_status']['status']) %>
+                  <div class="tracking-progress-bar__item tracking-progress-bar__item--first tracking-progress-bar__item--active">
+                    <i class="fas fa-store tracking-page"></i>
+                    <span class="label-tracking"><%= Spree.t(:placed) %></span>
+                  </div>
+                <% else %> 
+                  <div class="tracking-progress-bar__item">
+                    <i class="fas fa-store tracking-page"></i>
+                    <span class="label-tracking"><%= Spree.t(:placed) %></span>
+                  </div>  
+                <% end %>
+
+                <% if ["PRE_TRANSIT", "TRANSIT", "DELIVERED"].include?(tracking['tracking_status']['status']) %>
+                  <span class="tracking-progress-bar__item__bar tracking-progress-bar__item__bar--active"></span>
+                  <div class="tracking-progress-bar__item tracking-progress-bar__item--active">
+                    <i class="fa fa-archive tracking-page" aria-hidden="true"></i>
+                    <span class="label-tracking"> <%= Spree.t(:packed) %></span>
+                  </div>
+                <% else %>
+                  <span class="tracking-progress-bar__item__bar"></span>
+                  <div class="tracking-progress-bar__item">
+                    <i class="fa fa-archive tracking-page" aria-hidden="true"></i>
+                    <span class="label-tracking"> <%= Spree.t(:packed) %></span>
+                  </div>
+                <% end %>
+
+                <% if ["TRANSIT", "DELIVERED"].include?(tracking['tracking_status']['status']) %>
+                  <span class="tracking-progress-bar__item__bar tracking-progress-bar__item__bar--active"></span>
+                  <div class="tracking-progress-bar__item tracking-progress-bar__item--active">
+                    <i class="fas fa-shipping-fast tracking-page"></i>
+                    <span class="label-tracking"> <%= Spree.t(:shipped) %></span>
+                  </div>
+                <% else %>  
+                  <span class="tracking-progress-bar__item__bar"></span>
+                  <div class="tracking-progress-bar__item">
+                    <i class="fas fa-shipping-fast tracking-page"></i>
+                    <span class="label-tracking"> <%= Spree.t(:shipped) %> </span>
+                  </div>
+                <% end %>
+
+                <% if tracking['tracking_status']['status'] == "DELIVERED" %>
+                  <span class="tracking-progress-bar__item__bar tracking-progress-bar__item__bar--active"></span>
+                  <div class="tracking-progress-bar__item tracking-progress-bar__item--active">
+                    <i class="fas fa-clipboard-check tracking-page"></i>
+                    <span class="label-tracking"> <%= Spree.t(:delivered) %></span>
+                  </div>
+                <% else %>
+                  <span class="tracking-progress-bar__item__bar"></span>
+                  <div class="tracking-progress-bar__item">
+                    <i class="fas fa-clipboard-check tracking-page"></i>
+                    <span class="label-tracking"><%= Spree.t(:delivered) %></span>
+                  </div>
+                <% end %>
+              </div>  
+
+              <div class="col-12 col-sm-6 col-md-12 lenses-types">
+                <div class="ship-heading">
+                  <%= shipment.number %>
+                </div>
+
+                <% if tracking != nil  %>
+                  <div class="table-responsive">  
+                    <table class="table tracktable">
+                      <tbody>
+                        <tr>
+                          <td class="Track"><%= Spree.t(:carrier) %>:</td>
+                          <td class="trackno"><%= Spree.t(:tracking_number) %>:</td>
+                        </tr>
+                        <tr>
+                          <td class="Track"><%= tracking['carrier'] %></td>
+                          <td class="trackno"><%= tracking['tracking_number'] %></td>
+                        </tr>
+                        <tr>
+                          <td class="Track"><%= Spree.t(:from) %>:</td>
+                          <td class="trackno"><%= Spree.t(:to) %>:</td>
+                        </tr>
+                        <tr>
+                          <td class="Track"><%= "#{tracking['address_from']['zip']}, #{tracking['address_from']['city']}, #{tracking['address_from']['state']}, #{tracking['address_from']['country']}" %></td>
+                          <td class="trackno"><%= "#{tracking['address_to']['zip']}, #{tracking['address_to']['city']}, #{tracking['address_to']['state']}, #{tracking['address_to']['country']}" %></td>
+                        </tr>
+                        <tr>
+                          <td colspan="5" class="dimen">
+                            <hr class="hr">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="table-responsive">  
+                    <table class="table tracktable">
+                      <h3><%= Spree.t(:current_status) %> </h3>
+                      <tbody>
+                        <tr>
+                          <td class="current-status"><%= Spree.t(:status) %> :</td>
+                          <td class="trackstatus"><%= Spree.t(:date) %>:</td>
+                        </tr>
+                        <tr>
+                          <td class="current-status"><%= tracking['tracking_status']['status']%></td>
+                          <td class="trackstatus"><%= Date.parse(tracking['tracking_status']['status_date'])&.strftime('%m-%d-%Y') %></td>
+                        </tr>
+                        <tr>
+                          <td class="current-status"><%= Spree.t(:status_detail) %> : </td>
+                          <td class="trackstatus"><%= Spree.t(:location) %>:</td>
+                        </tr>
+                        <tr>
+                          <td class="current-status"><%= tracking['tracking_status']['status_details'] %></td>
+                          <td class="trackstatus"><%= "#{tracking['tracking_status']['location']['zip']}, #{tracking['tracking_status']['location']['city']}, #{tracking['tracking_status']['location']['state']}, #{tracking['tracking_status']['location']['country']}" %></td>
+                        </tr>
+                        <tr>
+                          <td colspan="5" class="dimen">
+                            <hr class="hr">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <% count = 1 %>  
+                  <h3><%= Spree.t(:history) %></h3>
+                  <% tracking['tracking_history'].each do |history| %>
+                    <% if count < 3 %>                                 
+                      <div class="history table-responsive">
+                        <table class="table tracktable">
+                          <tbody>
+                            <tr>
+                              <td class="history-head"><%= Spree.t(:date) %>:</td>
+                              <td class="trackhistory"><%= Spree.t(:status) %>:</td>
+                            </tr>
+                            <tr>
+                              <td class="history-head"><%= Date.parse(history['status_date'])&.strftime('%m-%d-%Y') %></td>
+                              <td class="trackhistory"><%= history['status'] %></td>
+                            </tr>
+                            <tr>
+                              <td class="history-head"><%= Spree.t(:location) %>:</td>
+                              <td class="trackhistory"><%= Spree.t(:status_detail) %>:</td>
+                            </tr>
+                            <tr>
+                              <td class="history-head"><%= history['location'].nil? ? "" : "#{history['location']['zip']}, #{history['location']['city']}, #{history['location']['state']}, #{history['location']['country']}" %></td>
+                              <td class="trackhistory"><%= history['status_details'] %></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <% count += 1 %>
+                    <% else %>
+                      <div class="demo collapse history history1 table-responsive">
+                        <table class="table tracktable">
+                          <tbody>                                                               
+                            <tr>
+                              <td class="history-head"><%= Spree.t(:date) %>:</td>
+                              <td class="trackhistory"><%= Spree.t(:status) %>:</td>
+                            </tr>
+                            <tr>
+                              <td class="history-head"><%= Date.parse(history['status_date'])&.strftime('%m-%d-%Y') %></td>
+                              <td class="trackhistory"><%= history['status'] %></td>
+                            </tr>
+                            <tr>
+                              <td class="history-head"><%= Spree.t(:location) %>:</td>
+                              <td class="trackhistory"><%= Spree.t(:status_detail) %>:</td>
+                            </tr>
+                            <tr>
+                              <td class="history-head"><%= "#{history['location']['zip']}, #{history['location']['city']}, #{history['location']['state']}, #{history['location']['country']}" %></td>
+                              <td class="trackhistory"><%= history['status_details'] %></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div> 
+                    <% end %>
+                  <% end %>
+                  <span data-toggle="collapse" data-target=".demo" class="more-history">
+                    <%= Spree.t(:more_tracking) %><i class="fas fa-angle-down more-history-icon"></i>
+                  </span>                                            
+                <% else %>
+                  <div> <%= Spree.t(:not_applicable) %> </div>
+                <% end %>
+
+                <%= content_for :head do %>
+                  <script type="text/javascript">
+                    $(document).ready(function () {
+                      $('.more-history').click(function () {
+                        var collapse_content_selector = $(this).attr('data-target');
+                        var toggle_switch = $(this);
+                        $(collapse_content_selector).toggle(function () {
+                          if ($(this).css('display') == 'none') {
+                            toggle_switch.html('More Tracking History <i class="fas fa-angle-down more-history-icon"></i>');
+                          } else {
+                            toggle_switch.html('Less Tracking History <i class="fas fa-angle-up more-history-icon"></i>');
+                          }
+                        });
+                      });
+                    });
+                  </script>
+                <% end %>
+              </div>
+            </div>
+          <% else %>
+            <div class="no-info">
+              <p><%= Spree.t(:no_tracking_info) %></p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</div>
+  
