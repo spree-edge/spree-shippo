@@ -27,15 +27,15 @@ This extension primarily consists of logic for using the USPS carrier service.
 
 ## Usage
 
-You must configure Spree Shippo by adding your Shippo API Token. Without this, you will encounter the following error and won't be able to proceed:
+You need to configure Spree Shippo by creating a `spree_shippo.rb` file in the `initializers` folder. Add the following code to the file. Also, make sure to add your Shippo API token to avoid "token not configured" errors.
+
 
 ```ruby
-    require 'shippo'
+require 'shippo'
 
-    Shippo::API.token = Rails.application.credentials.dig(:spree_shippo, :api_token) || ENV['SPREE_SHIPPO_API_TOKEN']
+Shippo::API.token = Rails.application.credentials.dig(:spree_shippo, :api_token) || ENV['SPREE_SHIPPO_API_TOKEN']
 
-    if Shippo::API.token.nil?
-    raise "Shippo API token is not configured. Please add it to Rails credentials or set the SHIPPO_API_TOKEN environment variable."
-    end
+if Shippo::API.token.nil?
+raise "Shippo API token is not configured. Please add it to Rails credentials or set the SHIPPO_API_TOKEN environment variable."
 end
 ```
