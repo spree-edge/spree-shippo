@@ -13,7 +13,7 @@ module SpreeShippo
         params[:customs_declaration] = create_customs_declaration if shipping_address.country.iso == 'CA'
 
         shippo_shipment = Shippo::Shipment.create(params)
-        label_url = generate_label(shippo_shipment, 'Ground Advantage')
+        label_url, shippo_rate = generate_label(shippo_shipment, 'Ground Advantage')
 
         line_item.update_column(:item_box_return_label, label_url) if label_url.present?
       end
@@ -27,9 +27,15 @@ module SpreeShippo
         params[:customs_declaration] = create_customs_declaration_if_canadian if shipping_address.country_id == 38
 
         shippo_shipment = Shippo::Shipment.create(params)
-        label_url = generate_label(shippo_shipment, 'Priority Mail')
 
-        line_item.update_column(:item_box_shipping_label, label_url) if label_url.present?
+
+        label_url, shippo_rate = generate_label(shippo_shipment, 'Priority Mail')
+
+        if label_url.length == 0
+          Shippo::Transaction.create({"rate": shippo_rate.first['object_id'],"async": false })
+        else
+          line_item.update_column(:item_box_shipping_label, label_url)
+        end
       end
 
       private
@@ -116,8 +122,12 @@ module SpreeShippo
 
       def generate_label(shippo_shipment, preferred_service)
         shippo_rate = shippo_shipment.rates
-        rate = shippo_rate.detect { |rate| rate['servicelevel']['name'] == preferred_service } || shippo_rate.first
-        Shippo::Transaction.create({ "rate": rate['object_id'], "async": false })['label_url']
+        method = shippo_rate.first['servicelevel']['name']
+        object_id=shippo_rate.first['object_id']
+        if shippo_rate.any? { |rate|  rate['servicelevel']['name'] == preferred_service }
+          rate=shippo_rate.detect { |rate|  rate['servicelevel']['name'] == preferred_service }
+        end
+        [Shippo::Transaction.create({ "rate": rate['object_id'], "async": false })['label_url'], shippo_rate]
       end
 
     end
