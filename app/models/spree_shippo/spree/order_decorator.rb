@@ -2,7 +2,7 @@ module SpreeShippo
   module Spree
     module OrderDecorator
 
-      BOX_DIMENSIONS = { length: 6, width: 3, height: 2, weight: 4 }.freeze
+      BOX_DIMENSIONS ||= { length: 6, width: 3, height: 2, weight: 4 }.freeze
 
       def get_user_return_label(line_item)
         stock_location = self.shipments.first.stock_location
