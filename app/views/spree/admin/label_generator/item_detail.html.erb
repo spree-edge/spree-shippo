@@ -1,5 +1,5 @@
 <div class="container">
-  <div><b><%= Spree::Store.current.name %></b></div>
+  <div><b><%= Spree::Stores::FindCurrent.new.execute.name %></b></div>
   <div><%= Spree.t(:order_number)%>: <%= line_item.order.number %></div>
   <div class="row">
     <table class="table table-striped" style="width: 50%">

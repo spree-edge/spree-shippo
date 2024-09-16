@@ -89,7 +89,7 @@ module SpreeShippo
           contents_type: "MERCHANDISE",
           non_delivery_option: "ABANDON",
           certify: true,
-          certify_signer: Spree::Store.current.name,
+          certify_signer: Spree::Stores::FindCurrent.new.execute.name,
           items: [customs_item[:object_id]]
         }
 
