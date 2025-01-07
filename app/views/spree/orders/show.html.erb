@@ -17,7 +17,7 @@
     </div>
     <% if !['pending', 'ready', 'backorder'].include?(@order.shipment_state) %>
       <div class="button-myaccount-view-all">
-        <%= link_to "TRACK", user_orders_shipment_tracking_path(@order.number), class: 'btn btn-primary rounded' %>
+        <%= link_to "Track", shipment_tracking_order_path(@order.number), class: 'btn btn-primary rounded' %>
       </div>
     <% end %>
   </div>

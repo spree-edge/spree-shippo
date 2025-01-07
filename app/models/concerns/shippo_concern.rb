@@ -59,7 +59,7 @@ module ShippoConcern
       async: false,
       address_from: {
         name: stock_location.name,
-        company: Spree::Stores::FindCurrent.new.execute.name,
+        company: order.store.name,
         street1: stock_location.address1,
         street2: stock_location.address2,
         city: stock_location.city,
