@@ -98,6 +98,10 @@ module SpreeShippo
         shippo_rates = shippo_shipment.rates
         preferred_rate = shippo_rates.find { |rate| rate['servicelevel']['name'] == preferred_service } || shippo_rates.first
       
+        if preferred_rate.nil?
+          raise StandardError, "No available rates found for the preferred service: #{preferred_service}"
+        end
+      
         transaction = Shippo::Transaction.create(rate: preferred_rate['object_id'], async: false)
       
         if transaction['status'] == 'ERROR'
